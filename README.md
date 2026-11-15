@@ -1,12 +1,12 @@
 # setup-jpm
 
-Installs [jpm](https://github.com/NonSwag/jpm), the Java package manager and build tool, in a GitHub
+Installs [jpm](https://github.com/java-package-manager/jpm), the Java package manager and build tool, in a GitHub
 Actions job, and caches what it downloads.
 
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: NonSwag/setup-jpm@v1
+  - uses: java-package-manager/setup-jpm@v1
   - run: jpm install --frozen
   - run: jpm test
   - run: jpm build
@@ -51,22 +51,22 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: NonSwag/setup-jpm@v1
+      - uses: java-package-manager/setup-jpm@v1
       - run: jpm test --frozen
 ```
 
 Native builds with GraalVM:
 
 ```yaml
-      - uses: NonSwag/setup-jpm@v1
+      - uses: java-package-manager/setup-jpm@v1
       - run: jpm build --native
 ```
 
-Publishing with the [jpm-publish](https://github.com/NonSwag/jpm-publish) extension:
+Publishing with the [jpm-publish](https://github.com/java-package-manager/jpm-publish) extension:
 
 ```yaml
-      - uses: NonSwag/setup-jpm@v1
-      - run: jpm add -g github:NonSwag/jpm-publish
+      - uses: java-package-manager/setup-jpm@v1
+      - run: jpm add -g github:java-package-manager/jpm-publish
       - run: |
           printf '%s' "$SIGNING_KEY" > "$RUNNER_TEMP/signing.asc"
           jpm publish central

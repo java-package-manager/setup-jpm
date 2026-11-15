@@ -3,7 +3,7 @@
 # the release's SHA256SUMS, puts jpm and jvm on PATH, and reports the version and paths as outputs.
 set -euo pipefail
 
-repo="${JPM_REPO:-NonSwag/jpm}"
+repo="${JPM_REPO:-java-package-manager/jpm}"
 version="${INPUT_VERSION:-latest}"
 version="${version#v}"
 

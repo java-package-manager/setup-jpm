@@ -1,6 +1,6 @@
 name: Setup jpm
 description: Install jpm, the Java package manager and build tool, and cache its downloads
-author: NonSwag
+author: java-package-manager
 branding:
   icon: package
   color: blue

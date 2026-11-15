@@ -81,7 +81,11 @@ Publishing with the [jpm-publish](https://github.com/NonSwag/jpm-publish) extens
 ## Versions
 
 Releases are tagged `v1.2.3`, and `v1` follows the newest `1.x`. Use `@v1` to get fixes without
-breaking changes.
+breaking changes, or `@v1.2.3` to pin one release.
+
+To release, change `VERSION` and push to `main`: once every test passes, CI tags the commit `v<VERSION>`,
+creates the GitHub release and moves the major tag (`v1`) to it. A version is never released twice;
+versions like `1.3.0-rc1` become pre-releases and do not move the major tag.
 
 ## License
 

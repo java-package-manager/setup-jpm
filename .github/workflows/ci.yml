@@ -97,8 +97,8 @@ jobs:
           cache: "false"
       - run: test "${{ steps.jpm.outcome }}" = failure
 
-  # A push to main whose VERSION has no tag yet is released, once every test passes: tag v<VERSION>, a
-  # GitHub release, and the major tag (v1) moved to it, so `uses: java-package-manager/setup-jpm@v1` gets it.
+  # A push to main whose VERSION has no tag yet is released, once every test passes: a tag with the plain
+  # version (1.2.3), a GitHub release, and the major tag (1) moved to it, so `setup-jpm@1` gets it.
   release:
     name: release
     if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
@@ -119,7 +119,7 @@ jobs:
             echo "::error::VERSION must be a version such as 1.2.3, not \"$version\""
             exit 1
           fi
-          tag="v$version"
+          tag="$version"
           if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null; then
             echo "$tag is already released"
             exit 0
@@ -128,9 +128,9 @@ jobs:
           case "$version" in *-*) pre="--prerelease" ;; esac
           gh release create "$tag" --target "$GITHUB_SHA" --title "setup-jpm $tag" --generate-notes $pre
           echo "::notice::released $tag"
-          # v1 follows the newest 1.x release (not pre-releases)
+          # 1 follows the newest 1.x release (not pre-releases)
           if [ -z "$pre" ]; then
-            major="v${version%%.*}"
+            major="${version%%.*}"
             git tag -f "$major" "$GITHUB_SHA"
             git push -f origin "refs/tags/$major"
             echo "::notice::moved $major to $tag"

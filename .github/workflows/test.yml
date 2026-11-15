@@ -1,0 +1,98 @@
+name: Test
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  schedule:
+    # jpm releases keep coming; check the action still installs the newest weekly
+    - cron: "17 5 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: ${{ matrix.os }} (${{ matrix.version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-15-intel, windows-latest]
+        version: [latest, canary]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: jpm
+        uses: ./
+        with:
+          version: ${{ matrix.version }}
+
+      - name: jpm and jvm are on PATH
+        run: |
+          set -eux
+          jpm --version
+          jvm --version
+          test -n "${{ steps.jpm.outputs.version }}"
+          test -f "${{ steps.jpm.outputs.path }}"
+          case "${{ matrix.version }}" in
+            canary) echo "${{ steps.jpm.outputs.version }}" | grep -Eq -- '-[0-9a-f]{7}$' ;;
+            *) echo "${{ steps.jpm.outputs.version }}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' ;;
+          esac
+
+      - name: Build and test a new project
+        run: |
+          set -eux
+          cd "$RUNNER_TEMP"
+          rm -rf demo && mkdir demo && cd demo
+          jpm init demo
+          jpm add --test org.junit.jupiter:junit-jupiter
+          jpm test
+          jpm build
+          jpm start | tee out.txt
+          test -s out.txt
+
+  java:
+    name: java input
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: jpm
+        uses: ./
+        with:
+          java: "17"
+          cache: "false"
+      - run: |
+          set -eux
+          test -n "${{ steps.jpm.outputs.java-home }}"
+          test "$JAVA_HOME" = "${{ steps.jpm.outputs.java-home }}"
+          java -version 2>&1 | tee v.txt
+          grep -q 'version "17' v.txt
+
+  pinned:
+    name: pinned version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: jpm
+        uses: ./
+        with:
+          version: "0.6.0"
+          cache: "false"
+      - run: test "${{ steps.jpm.outputs.version }}" = "0.6.0"
+
+  missing:
+    name: unknown version fails
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: jpm
+        continue-on-error: true
+        uses: ./
+        with:
+          version: "0.0.404"
+          cache: "false"
+      - run: test "${{ steps.jpm.outcome }}" = failure

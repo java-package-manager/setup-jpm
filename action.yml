@@ -1,0 +1,74 @@
+name: Setup jpm
+description: Install jpm, the Java package manager and build tool, and cache its downloads
+author: NonSwag
+branding:
+  icon: package
+  color: blue
+
+inputs:
+  version:
+    description: "The jpm version: latest (the newest release), canary (the newest build of jpm's main branch) or a version such as 0.6.0"
+    required: false
+    default: latest
+  java:
+    description: "A JDK to install with jpm, such as 21, temurin-21 or graalvm-21. Projects get the JDK their project.jsonc asks for anyway; this is for running java before that."
+    required: false
+    default: ""
+  cache:
+    description: "Cache jpm's downloads (Maven packages, Git mirrors, Git builds and JDKs) between runs, keyed by every project.lock"
+    required: false
+    default: "true"
+  shims:
+    description: "Install the java, javac, ... shims, so plain java commands use the JDK the project asks for"
+    required: false
+    default: "false"
+
+outputs:
+  version:
+    description: The installed jpm version
+    value: ${{ steps.install.outputs.version }}
+  path:
+    description: The path of the jpm binary
+    value: ${{ steps.install.outputs.path }}
+  java-home:
+    description: The home of the JDK installed for the java input, if one was given
+    value: ${{ steps.java.outputs.java-home }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install jpm
+      id: install
+      shell: bash
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_SHIMS: ${{ inputs.shims }}
+      run: '"$GITHUB_ACTION_PATH/setup.sh"'
+
+    - name: Cache jpm downloads
+      if: inputs.cache == 'true'
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ steps.install.outputs.home }}/repository
+          ${{ steps.install.outputs.home }}/git
+          ${{ steps.install.outputs.home }}/builds
+          ${{ steps.install.outputs.home }}/jdks
+        key: jpm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/project.lock', '**/project.jsonc') }}
+        restore-keys: |
+          jpm-${{ runner.os }}-${{ runner.arch }}-
+
+    - name: Install the JDK
+      id: java
+      if: inputs.java != ''
+      shell: bash
+      env:
+        INPUT_JAVA: ${{ inputs.java }}
+      run: |
+        jpm java install "$INPUT_JAVA"
+        home=$(jpm java home "$INPUT_JAVA" 2>/dev/null || true)
+        if [ -n "$home" ]; then
+          echo "java-home=$home" >> "$GITHUB_OUTPUT"
+          echo "JAVA_HOME=$home" >> "$GITHUB_ENV"
+          echo "$home/bin" >> "$GITHUB_PATH"
+        fi

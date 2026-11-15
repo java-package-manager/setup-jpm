@@ -39,7 +39,9 @@ jobs:
           test -n "${{ steps.jpm.outputs.version }}"
           test -f "${{ steps.jpm.outputs.path }}"
           case "${{ matrix.version }}" in
-            canary) echo "${{ steps.jpm.outputs.version }}" | grep -Eq -- '-[0-9a-f]{7}$' ;;
+            # a canary build (0.7.1-1a2b3c4), or right after a release, the release itself: jpm releases the
+            # commit that changes its version instead of building a canary of it
+            canary) echo "${{ steps.jpm.outputs.version }}" | grep -Eq -- '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9a-f]{7})?$' ;;
             *) echo "${{ steps.jpm.outputs.version }}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' ;;
           esac
 

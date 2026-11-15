@@ -22,6 +22,10 @@ inputs:
     description: "Install the java, javac, ... shims, so plain java commands use the JDK the project asks for"
     required: false
     default: "false"
+  format-cache:
+    description: "Cache the results of jpm format (.cache/format) between runs, so jpm format --check skips files that did not change. For projects that run jpm format"
+    required: false
+    default: "false"
 
 outputs:
   version:
@@ -57,6 +61,17 @@ runs:
         key: jpm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/project.lock', '**/project.jsonc') }}
         restore-keys: |
           jpm-${{ runner.os }}-${{ runner.arch }}-
+
+    # jpm format keys its own results by file content, config, tool version and classpath, so any earlier
+    # cache is safe to start from: restore the newest one, and save this run's under a new key
+    - name: Cache jpm format results
+      if: inputs.format-cache == 'true'
+      uses: actions/cache@v4
+      with:
+        path: "**/.cache/format"
+        key: jpm-format-${{ runner.os }}-${{ runner.arch }}-${{ github.sha }}
+        restore-keys: |
+          jpm-format-${{ runner.os }}-${{ runner.arch }}-
 
     - name: Install the JDK
       id: java

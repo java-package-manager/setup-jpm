@@ -22,6 +22,7 @@ No `setup-java` step is needed: jpm installs the JDK the project's `project.json
 | `java` | | A JDK to install and put on `PATH` as `JAVA_HOME`, such as `21`, `temurin-21` or `graalvm-21`. Only needed to run `java` yourself before jpm does |
 | `cache` | `true` | Cache jpm's Maven packages, Git mirrors and builds and JDKs between runs, keyed by every `project.lock` and `project.jsonc` |
 | `shims` | `false` | Install jpm's `java`, `javac`, ... shims, so plain `java` commands use the JDK the project asks for |
+| `format-cache` | `false` | Cache the results of [jpm format](https://github.com/java-package-manager/jpm-format) (`.cache/format/`) between runs, so `jpm format --check` skips files that did not change. Off by default: in a project without jpm format there is nothing to save, which `actions/cache` warns about |
 
 ## Outputs
 
@@ -60,6 +61,17 @@ Native builds with GraalVM:
 ```yaml
       - uses: java-package-manager/setup-jpm@1
       - run: jpm build --native
+```
+
+Checking formatting and lint with [jpm-format](https://github.com/java-package-manager/jpm-format), with its
+results cached so unchanged files are skipped (findings show up as pull request annotations):
+
+```yaml
+      - uses: java-package-manager/setup-jpm@1
+        with:
+          format-cache: true
+      - run: jpm add -g github:java-package-manager/jpm-format
+      - run: jpm format --check
 ```
 
 Publishing with the [jpm-publish](https://github.com/java-package-manager/jpm-publish) extension:

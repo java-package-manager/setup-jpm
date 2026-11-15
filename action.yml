@@ -43,7 +43,7 @@ runs:
       env:
         INPUT_VERSION: ${{ inputs.version }}
         INPUT_SHIMS: ${{ inputs.shims }}
-      run: '"$GITHUB_ACTION_PATH/setup.sh"'
+      run: bash "$GITHUB_ACTION_PATH/setup.sh"
 
     - name: Cache jpm downloads
       if: inputs.cache == 'true'

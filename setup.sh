@@ -33,9 +33,9 @@ if [ -n "${JPM_INSTALL_BASE:-}" ]; then
 elif [ "$version" = latest ]; then
   base="https://github.com/$repo/releases/latest/download"
 elif [ "$version" = canary ]; then
-  # the release tagged canary names the newest canary build in VERSION
+  # the release tagged canary names jpm's newest release or prerelease in VERSION
   canary="$(get "https://github.com/$repo/releases/download/canary/VERSION" | tr -d '[:space:]')"
-  [ -n "$canary" ] || { echo "::error::could not find jpm's newest canary build"; exit 1; }
+  [ -n "$canary" ] || { echo "::error::could not find jpm's newest prerelease"; exit 1; }
   base="https://github.com/$repo/releases/download/$canary"
 else
   base="https://github.com/$repo/releases/download/$version"

@@ -7,7 +7,7 @@ branding:
 
 inputs:
   version:
-    description: "The jpm version: latest (the newest release), canary (the newest build of jpm's main branch) or a version such as 0.6.0"
+    description: "The jpm version: latest (the newest release), canary (the newest prerelease or release, whichever is newer) or a version such as 0.6.0"
     required: false
     default: latest
   java:

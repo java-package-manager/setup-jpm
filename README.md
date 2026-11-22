@@ -5,7 +5,7 @@ Actions job, and caches what it downloads.
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v7
   - uses: java-package-manager/setup-jpm@v1
   - run: jpm install --frozen
   - run: jpm test
@@ -50,7 +50,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: java-package-manager/setup-jpm@v1
       - run: jpm test --frozen
 ```

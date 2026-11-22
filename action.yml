@@ -47,7 +47,7 @@ runs:
 
     - name: Cache jpm downloads
       if: inputs.cache == 'true'
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: |
           ${{ steps.install.outputs.home }}/repository

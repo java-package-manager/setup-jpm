@@ -24,7 +24,7 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - id: jpm
         uses: ./
@@ -60,7 +60,7 @@ jobs:
     name: java input
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - id: jpm
         uses: ./
         with:
@@ -77,7 +77,7 @@ jobs:
     name: pinned version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - id: jpm
         uses: ./
         with:
@@ -89,7 +89,7 @@ jobs:
     name: unknown version fails
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - id: jpm
         continue-on-error: true
         uses: ./
@@ -110,7 +110,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Release a new version
         run: |

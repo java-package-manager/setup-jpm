@@ -6,7 +6,7 @@ Actions job, and caches what it downloads.
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: java-package-manager/setup-jpm@1
+  - uses: java-package-manager/setup-jpm@v1
   - run: jpm install --frozen
   - run: jpm test
   - run: jpm build
@@ -51,21 +51,21 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: java-package-manager/setup-jpm@1
+      - uses: java-package-manager/setup-jpm@v1
       - run: jpm test --frozen
 ```
 
 Native builds with GraalVM:
 
 ```yaml
-      - uses: java-package-manager/setup-jpm@1
+      - uses: java-package-manager/setup-jpm@v1
       - run: jpm build --native
 ```
 
 Publishing with the [jpm-publish](https://github.com/java-package-manager/jpm-publish) extension:
 
 ```yaml
-      - uses: java-package-manager/setup-jpm@1
+      - uses: java-package-manager/setup-jpm@v1
       - run: jpm add -g github:java-package-manager/jpm-publish
       - run: |
           printf '%s' "$SIGNING_KEY" > "$RUNNER_TEMP/signing.asc"
@@ -80,11 +80,11 @@ Publishing with the [jpm-publish](https://github.com/java-package-manager/jpm-pu
 
 ## Versions
 
-Releases are tagged with the plain version (`1.2.3`), and `1` follows the newest `1.x`. Use `@1` to get
-fixes without breaking changes, or `@1.2.3` to pin one release.
+Releases are tagged `v<version>` (`v1.2.3`), and `v1` always follows the newest `v1.x.y`. Use `@v1` to get
+fixes without breaking changes, or `@v1.2.3` to pin one release.
 
 To release, change `VERSION` and push to `main`: once every test passes, CI tags the commit with that
-version, creates the GitHub release and moves the major tag (`1`) to it. A version is never released twice;
+version (`v1.2.3`), creates the GitHub release and moves the major tag (`v1`) to it. A version is never released twice;
 versions like `1.3.0-rc1` become pre-releases and do not move the major tag.
 
 ## License

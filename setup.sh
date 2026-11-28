@@ -4,7 +4,16 @@
 set -euo pipefail
 
 repo="${JPM_REPO:-java-package-manager/jpm}"
-version="${INPUT_VERSION:-latest}"
+version="${INPUT_VERSION:-}"
+if [ -z "$version" ]; then
+  # the version the project pins ("jpm" in the root project.jsonc), which jpm would otherwise install on first use
+  manifest="${GITHUB_WORKSPACE:-.}/project.jsonc"
+  if [ -f "$manifest" ]; then
+    version="$(grep -oE '"jpm"[[:space:]]*:[[:space:]]*"[^"]+"' "$manifest" | head -n 1 | sed -E 's/.*"([^"]+)"$/\1/' || true)"
+    [ -n "$version" ] && echo "project.jsonc pins jpm $version"
+  fi
+fi
+version="${version:-latest}"
 version="${version#v}"
 
 case "${RUNNER_OS:-$(uname -s)}" in

@@ -18,9 +18,9 @@ No `setup-java` step is needed: jpm installs the JDK the project's `project.json
 
 | Input | Default | |
 |---|---|---|
-| `version` | `latest` | `latest` (the newest release), `canary` (the newest prerelease, such as `0.13.0-beta.0`, or release, whichever is newer), or a version such as `0.6.0` |
+| `version` | the project's pin, else `latest` | `latest` (the newest release), `canary` (the newest prerelease, such as `0.13.0-beta.0`, or release, whichever is newer), or a version such as `0.6.0`. Left out, it is the version the `project.jsonc` at the root of the workspace pins with `"jpm"` (jpm 0.20.0 and later), else `latest` |
 | `java` | | A JDK to install and put on `PATH` as `JAVA_HOME`, such as `21`, `temurin-21` or `graalvm-21`. Only needed to run `java` yourself before jpm does |
-| `cache` | `true` | Cache jpm's Maven packages, Git mirrors and builds and JDKs between runs, keyed by every `project.lock` and `project.jsonc` |
+| `cache` | `true` | Cache jpm's Maven packages, Git mirrors and builds, JDKs and pinned jpm versions between runs, keyed by every `project.lock` and `project.jsonc` |
 | `shims` | `false` | Install jpm's `java`, `javac`, ... shims, so plain `java` commands use the JDK the project asks for |
 
 ## Outputs

@@ -7,9 +7,9 @@ branding:
 
 inputs:
   version:
-    description: "The jpm version: latest (the newest release), canary (the newest prerelease or release, whichever is newer) or a version such as 0.6.0"
+    description: "The jpm version: latest (the newest release), canary (the newest prerelease or release, whichever is newer) or a version such as 0.6.0. Left out: the version the project.jsonc in the workspace pins (\"jpm\"), else latest"
     required: false
-    default: latest
+    default: ""
   java:
     description: "A JDK to install with jpm, such as 21, temurin-21 or graalvm-21. Projects get the JDK their project.jsonc asks for anyway; this is for running java before that."
     required: false
@@ -54,6 +54,7 @@ runs:
           ${{ steps.install.outputs.home }}/git
           ${{ steps.install.outputs.home }}/builds
           ${{ steps.install.outputs.home }}/jdks
+          ${{ steps.install.outputs.home }}/versions
         key: jpm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/project.lock', '**/project.jsonc') }}
         restore-keys: |
           jpm-${{ runner.os }}-${{ runner.arch }}-
